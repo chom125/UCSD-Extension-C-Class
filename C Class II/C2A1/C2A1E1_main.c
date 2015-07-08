@@ -16,7 +16,7 @@
 #include <stdlib.h>
 
 #define Sum(addend1, addend2) ((addend1) + (addend2))
-#define Elements(arrayDesig) (sizeof(arrayDesig) / sizeof(arrayDesig[0])) 
+#define Elements(arrayDesig) (sizeof(arrayDesig) / sizeof((arrayDesig)[0])) 
 long *CreateArray(size_t elementCount)
 {
    //This will allocate an array of elementCount with type long
@@ -61,7 +61,7 @@ void DisplayClearedArray()
    //Sets all value sto zero, prints all on a new line
    int arrayIndex = 0;
    double testArray[sizeof(long double)] = {0};
-   while (arrayIndex < sizeof(testArray) / sizeof(testArray[0]))
+   while ((size_t)arrayIndex < sizeof(testArray) / sizeof(testArray[0]))
    {
       printf("%f\n", testArray[arrayIndex]);
       arrayIndex++;
@@ -73,5 +73,6 @@ int main(void)
    //Main function that allows the file to compile properly
    //Print and return exit success
    printf("Assignment 1 Exercise 1 Complete!\n");
+   DisplayClearedArray();
    return(EXIT_SUCCESS);
 }
