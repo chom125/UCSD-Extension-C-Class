@@ -3,7 +3,7 @@
  *lucke.pirate@gmail.com
  *_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
  *7/1/15
- *C2A1E2_main.c
+ *C2A1E2_main.cpp
  *Win7
  *Visual C++ 11.0
  *
@@ -14,21 +14,23 @@
 #include <cstdlib>
 using namespace std;
 
-//class PersonInfo{
-//    private int age;
-//    protected bool error;
-//    
-//    public:
-//    
-//    
-//};
-//
-//PersonInfo *DeclareCppStruct()
-//{
-//    //Creaites an instnace of PersonInfo and returns it
-//    person = PersonInfo();
-//    return(person);
-//}
+class PersonInfo
+{
+private:
+    int age;
+protected:
+    bool error;
+    void DoNothing(double **ppDbl);
+public:
+    int GetAge(const int *pInt) const { return age + int(pInt); }  
+};
+
+PersonInfo *DeclareCppStruct()
+{
+    //creaites an instnace of personinfo and returns it
+    PersonInfo person;
+    return(&person);
+}
 
 void PrintSomething(double param = 0)
 {
@@ -42,7 +44,7 @@ void PrintSomething(float param)
     cout << param;
 }
 
-void PrintSomething(const char* param)
+void PrintSomething(const char *param)
 {
     //Function overloading, pointer to a char instance
     cout << param;
@@ -50,30 +52,32 @@ void PrintSomething(const char* param)
 
 void TestPrintSomething()
 {
+    const double DOUBLEV = 23.4;
+    const float FLOATV = 1825e-1;
+    const char *HELLO = "Hello world!";
     PrintSomething();
-    PrintSomething(23.4);
-    PrintSomething(1825e-1);
-    PrintSomething(&"Hello world!");
+    PrintSomething(DOUBLEV);
+    PrintSomething(FLOATV);
+    PrintSomething(HELLO);
 }
 
 long DisplayBases(double value)
 {
     //Prints out value in different formats
     cout << value << oct << value << hex << value;
-    return(value);
+    return(long(value));
 }
 
 void DisplayCharValues()
 {
     //Prints out the integer value of three characters
-    const char alpha = 'a';
-    const char beta = 'b';
-    const char zeta = 'z';
-    printf("%d\n%d\n%d\n", alpha, beta, zeta);
-    
+    const char ALPHA = 'A';
+    const char BETA = 'B';
+    const char ZETA = 'Z';
+    cout << int(ALPHA) << int(BETA) << int(ZETA);
 }
 
-int main(void)
+int main()
 {
     //Main program, prints and returns successful
     cout << "Assignment 1 Exercise 2 Complete!";

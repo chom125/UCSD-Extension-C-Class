@@ -1,0 +1,12 @@
+Craig Ricker, U06369876
+lucke.pirate@gmail.com
+_SP15_OL: C/C++ Programming I : Fundamental Programming Concepts, 106644, Ray Mitchell
+4/28/15
+C1A4E0_Quiz.txt
+Simple quiz answers for the second asignment
+1.A
+2.C
+3.E
+4.D
+5.D
+6.B
