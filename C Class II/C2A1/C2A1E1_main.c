@@ -16,19 +16,16 @@
 #include <stdlib.h>
 
 #define Sum(addend1, addend2) ((addend1) + (addend2))
-#define Elements(arrayDesig) (sizeof(arrayDesig)/sizeof((arrayDesig[0])))
-
-
-
+#define Elements(arrayDesig) (sizeof(arrayDesig) / sizeof(arrayDesig[0])) 
 long *CreateArray(size_t elementCount)
 {
    //This will allocate an array of elementCount with type long
    long *retArray;
    if ((retArray = (long *)malloc(elementCount)) == NULL)
-      {
-      printf("Memory failed, exiting\n");
+   {
+      fprintf(stderr, "Memory failed, exiting\n");
       exit(EXIT_FAILURE);
-      }
+   }
    return(retArray);
 }
 
@@ -37,17 +34,22 @@ FILE *OpenFile(const char *filePath)
    //Opens filed pointed to by filePath, returns pointer to the FILE
    FILE *retFile;
    if ((retFile = fopen(filePath, "a+b")))
-      printf("File not able to be opened\n");
+   {
+      fprintf(stderr, "File not able to be opened\n");
       exit(EXIT_FAILURE);
+   }
    return(retFile);
 }
 
 void CopyString(char *destination, const char *source)
 {
    //Copies string array from source to destination
-   for (source; *source != '\0'; ++source, ++destination){
+   while (*source != '\0') 
+   {
       //Goes through source, sets destination equal to source
       *destination = *source;
+      ++source;
+      ++destination;
    }
    //exits when terminal character found, adds to end and returns
    *destination = '\0';
@@ -58,16 +60,18 @@ void DisplayClearedArray()
    //Creates a double array of size equal to the sizeof(long double)
    //Sets all value sto zero, prints all on a new line
    int arrayIndex = 0;
-   double testArray[sizeof(long double)] = { 0 };
-   for (arrayIndex; arrayIndex < sizeof(testArray) / sizeof(testArray[0]); arrayIndex++)
-      printf("%d\n", testArray[arrayIndex]);
+   double testArray[sizeof(long double)] = {0};
+   while (arrayIndex < sizeof(testArray) / sizeof(testArray[0]))
+   {
+      printf("%f\n", testArray[arrayIndex]);
+      arrayIndex++;
+   }
 }
 
 int main(void)
 {
    //Main function that allows the file to compile properly
    //Print and return exit success
-   printf("Assignment 1 Exercise 1 Complete!");
-
+   printf("Assignment 1 Exercise 1 Complete!\n");
    return(EXIT_SUCCESS);
 }

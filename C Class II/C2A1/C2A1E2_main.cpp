@@ -14,7 +14,7 @@
 #include <cstdlib>
 using namespace std;
 
-class PersonInfo
+struct PersonInfo
 {
 private:
     int age;
@@ -28,7 +28,7 @@ public:
 PersonInfo *DeclareCppStruct()
 {
     //creaites an instnace of personinfo and returns it
-    PersonInfo person;
+    static struct PersonInfo person;
     return(&person);
 }
 
@@ -54,18 +54,18 @@ void TestPrintSomething()
 {
     const double DOUBLEV = 23.4;
     const float FLOATV = 1825e-1;
-    const char *HELLO = "Hello world!";
     PrintSomething();
     PrintSomething(DOUBLEV);
     PrintSomething(FLOATV);
-    PrintSomething(HELLO);
+    PrintSomething("Hello world!");
 }
 
 long DisplayBases(double value)
 {
     //Prints out value in different formats
-    cout << value << oct << value << hex << value;
-    return(long(value));
+    long intPart = int(value) / 1;
+    cout << int(intPart) << '\n' << oct << int(intPart) << '\n' << hex << int(intPart);
+    return(intPart);
 }
 
 void DisplayCharValues()
