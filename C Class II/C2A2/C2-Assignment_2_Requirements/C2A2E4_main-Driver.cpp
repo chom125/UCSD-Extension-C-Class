@@ -21,7 +21,7 @@ using namespace std;
 const char * const FILENAME = "TestFile2.txt";
 
 void OpenFile(const char *fileName, ifstream &inFile);
-int Reverse(ifstream &inFile, int level);
+int Reverse(ifstream &inFile, const int level);
 
 int main()
 {
