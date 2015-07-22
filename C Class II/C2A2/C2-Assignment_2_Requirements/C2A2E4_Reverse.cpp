@@ -48,6 +48,6 @@ int Reverse(ifstream &inFile, const int level)
    if (level == 1)
       cout << char(toupper(thisChar));
    else
-      cout << char(tolower(thisChar));
+      cout << char(thisChar);
    return thisSep;
 }

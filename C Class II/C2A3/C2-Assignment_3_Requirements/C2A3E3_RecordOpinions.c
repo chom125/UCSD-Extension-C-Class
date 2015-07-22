@@ -19,7 +19,7 @@
 void RecordOpinions(void)
 {
    //This function will record ratings, and then print them out
-   int curInt = 0;
+   int curInt;
    int userResponses[ARRAYSIZE] = {0};
 
    for (;;)
