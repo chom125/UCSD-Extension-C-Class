@@ -10,10 +10,11 @@
 
 #include "C2A4E1_ArraySize.h"
 void RandomizeArray(float inputArray[DIM1][DIM2][DIM3][DIM4]);
+void ComputeAverages(float inputArray[DIM1][DIM2][DIM3][DIM4], float *nestedAvg, float *linearAvg);
 void WorkerFunction(float *nestedAvg, float *linearAvg)
 {
    float testArray[DIM1][DIM2][DIM3][DIM4];
    RandomizeArray(testArray);
-   printf("hello");
+   ComputeAverages(testArray, nestedAvg, linearAvg);
    
 }
