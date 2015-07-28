@@ -14,10 +14,10 @@
 void RandomizeArray(float inputArray[DIM1][DIM2][DIM3][DIM4])
 {
    //Loops through the array with pointers, to set all values to a random float
+   srand((unsigned int)time(NULL));
    for (float *arrayPointer = (float *)inputArray; arrayPointer < (float *)inputArray + DIM1 * DIM2 * DIM3 * DIM4;
         ++arrayPointer)
    {
-      srand(time(NULL));
       *arrayPointer =  (float) rand();
    }
 }
