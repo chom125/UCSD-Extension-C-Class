@@ -10,7 +10,7 @@
  *Explore type casting and declarations
  *Email title: C2A3E2_U06369876
  */
-
+const int ARRAYSIZE = 9;
 void TestDeclarations()
 {
    //One is below
@@ -18,8 +18,9 @@ void TestDeclarations()
    //Two is below
    int fcnA(int val);
    //Three is below
-   float **ppa[9];
+   float (**ppa)[ARRAYSIZE];
    //Four is below
-   float **&rppa[9] = ppa;
+   float (**&rppa)[ARRAYSIZE] = ppa;
    //Five is below
+   ppa = (float (**)[ARRAYSIZE])vp;
 }

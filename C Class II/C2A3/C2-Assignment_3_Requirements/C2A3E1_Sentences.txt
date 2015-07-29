@@ -12,4 +12,4 @@ C2A3E1_Sentences.txt
 7. values is an array
 8. values is a pointer to a float
 9. values is a pointer to a float
-10. values is an array
+10. values is a pointer to a float
