@@ -21,7 +21,7 @@ using namespace std;
 
 #include "C2A5E4_StatusCode-Driver.h"
 
-const char * const FILENAME = "TestFile5.txt";
+const char * const FILENAME = "/Users/craig/Xcode Projects/Class Test/TestFile5.txt";
 
 void OpenFile(const char *fileName, ifstream &inFile);
 StatusCode DetectFloats(const char *chPtr);

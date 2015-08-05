@@ -1,55 +1,164 @@
-#define INSTRUCTOR_FILE /* DO NOT DEFINE THIS MACRO IN ANY FILES YOU CREATE */
-
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-
-/****************************************************************************
- * Everything in this file was written to help test/verify your code and must
- * not be altered in any way.  Do not rename this file or copy anything from
- * it into your file(s).  This file does not necessarily represent good coding
- * technique, proper formatting/style, or meet the requirements your code must
- * meet.  You do not need to understand the code in this file to write yours.
- ***************************************************************************/
-#ifdef INSTRUCTOR_FILE
+//
+//  C2A5E4_DetectFloats.cpp
+//  Class Test
+//
+//  Created by Craig Ricker on 8/4/15.
+//  Copyright (c) 2015 Jortssports. All rights reserved.
+//
 
 #include <cstdlib>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 #include "C2A5E4_StatusCode-Driver.h"
 
-const char * const FILENAME = "TestFile5.txt";
-
-void OpenFile(const char *fileName, ifstream &inFile);
-StatusCode DetectFloats(const char *chPtr);
-
-int main()
+StatusCode DetectFloats(const char *chPtr)
 {
-   const int BUFSIZE = 128;                 // input string buffer size
-   const int SAFEBUF = BUFSIZE - 1;         // limit input string
-   char buf[BUFSIZE];                       // input buffer
-   ifstream inFile;
+   enum States{
+      START,
+      WHOLE,
+      NOTWHOLE,
+      EXPONENT,
+      FRACTIONAL,
+      EXPONENTSIGN,
+      POSTEXPONENT,
+      FLOATSTEP,
+      LONGSTEP
+   } state  = START;
 
-   OpenFile(FILENAME, inFile);
-
-   // Get one string at a time and pass it to the parser function.
-   while (inFile >> setw(SAFEBUF) >> buf)
+   for (int inChar;; chPtr++)
    {
-      cout << '"' << buf << "\" is ";
-      switch (DetectFloats(buf))
-      {
-         case NOTFLOATING:  cout << "not a floating literal.\n";        break;
-         case TYPE_FLOAT:   cout << "type float.\n";                    break;
-         case TYPE_DOUBLE:  cout << "type double.\n";                   break;
-         case TYPE_LDOUBLE: cout << "type long double.\n";              break;
-         default:           cout << "*****internal error*****\n";       break;
+      inChar = (int)*chPtr;
+      switch (state) {
+         case START:
+            switch (inChar) {
+               case '.':
+                  state = NOTWHOLE;
+                  break;
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = WHOLE;
+                  break;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case WHOLE:
+            switch (inChar){
+               case 'E':
+                  state = EXPONENT;
+                  break;
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = WHOLE;
+                  break;
+               case '.':
+                  state = FRACTIONAL;
+                  break;
+               default:
+                  return NOTFLOATING;
+                  
+            }
+            break;
+         case NOTWHOLE:
+            switch (inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = FRACTIONAL;
+                  break;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case EXPONENT:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = POSTEXPONENT;
+                  break;
+               case '+': case '-':
+                  state = EXPONENTSIGN;
+                  break;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case FRACTIONAL:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = FRACTIONAL;
+                  break;
+               case '\0':
+                  return TYPE_DOUBLE;
+               case 'L':
+                  state = LONGSTEP;
+                  break;
+               case 'F':
+                  state = FLOATSTEP;
+                  break;
+               case 'E':
+                  state = EXPONENT;
+                  break;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case EXPONENTSIGN:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = POSTEXPONENT;
+                  break;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case POSTEXPONENT:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = POSTEXPONENT;
+                  break;
+               case 'F':
+                  state = FLOATSTEP;
+                  break;
+               case 'L':
+                  state = LONGSTEP;
+                  break;
+               case '\0':
+                  return TYPE_DOUBLE;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case FLOATSTEP:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = FLOATSTEP;
+                  break;
+               case '\0':
+                  return TYPE_FLOAT;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
+         case LONGSTEP:
+            switch(inChar){
+               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
+               case '9':
+                  state = LONGSTEP;
+                  break;
+               case '\0':
+                  return TYPE_LDOUBLE;
+               default:
+                  return NOTFLOATING;
+            }
+            break;
       }
    }
-
-   inFile.close();
-   return EXIT_SUCCESS;
 }
-#endif
