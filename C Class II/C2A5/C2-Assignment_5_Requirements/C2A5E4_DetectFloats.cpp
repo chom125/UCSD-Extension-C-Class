@@ -1,23 +1,25 @@
-//
-//  C2A5E4_DetectFloats.cpp
-//  Class Test
-//
-//  Created by Craig Ricker on 8/4/15.
-//  Copyright (c) 2015 Jortssports. All rights reserved.
-//
+/*
+ *Craig Ricker, U06369876
+ *lucke.pirate@gmail.com
+ *_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
+ *8/4/15
+ *C2A5E4_DetectFloats.cpp
+ *Win7
+ *Visual C++ 11.0
+ *
+ *Making a state machine from our diagram built in E3
+ *Email title: C2A5E4_U06369876
+ */
 
-#include <cstdlib>
 #include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <cstring>
 using namespace std;
 
 #include "C2A5E4_StatusCode-Driver.h"
 
 StatusCode DetectFloats(const char *chPtr)
 {
-   enum States{
+   //The various states that exist, and that need to be dealt with
+   enum States {
       START,
       WHOLE,
       NOTWHOLE,
@@ -28,13 +30,12 @@ StatusCode DetectFloats(const char *chPtr)
       FLOATSTEP,
       LONGSTEP
    } state  = START;
-
-   for (int inChar;; chPtr++)
-   {
-      inChar = (int)*chPtr;
+   //Limit inChar to the scope of the for loop
+   for (;; chPtr++) {
       switch (state) {
+         //Start is the entry point, should never return
          case START:
-            switch (inChar) {
+            switch (*chPtr) {
                case '.':
                   state = NOTWHOLE;
                   break;
@@ -46,9 +47,10 @@ StatusCode DetectFloats(const char *chPtr)
                   return NOTFLOATING;
             }
             break;
+         //Whole is a whole number
          case WHOLE:
-            switch (inChar){
-               case 'E':
+            switch (*chPtr) {
+               case 'E': case 'e':
                   state = EXPONENT;
                   break;
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
@@ -59,12 +61,12 @@ StatusCode DetectFloats(const char *chPtr)
                   state = FRACTIONAL;
                   break;
                default:
-                  return NOTFLOATING;
-                  
+                  return NOTFLOATING;         
             }
             break;
+         //Not whole begins with a period
          case NOTWHOLE:
-            switch (inChar){
+            switch (*chPtr) {
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
                case '9':
                   state = FRACTIONAL;
@@ -73,8 +75,9 @@ StatusCode DetectFloats(const char *chPtr)
                   return NOTFLOATING;
             }
             break;
+         //Exponent contains e or E
          case EXPONENT:
-            switch(inChar){
+            switch (*chPtr) {
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
                case '9':
                   state = POSTEXPONENT;
@@ -86,29 +89,31 @@ StatusCode DetectFloats(const char *chPtr)
                   return NOTFLOATING;
             }
             break;
+         //Fractional has a period after an integer portion
          case FRACTIONAL:
-            switch(inChar){
+            switch (*chPtr) {
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
                case '9':
                   state = FRACTIONAL;
                   break;
                case '\0':
                   return TYPE_DOUBLE;
-               case 'L':
+               case 'L': case 'l':
                   state = LONGSTEP;
                   break;
-               case 'F':
+               case 'F': case 'f':
                   state = FLOATSTEP;
                   break;
-               case 'E':
+               case 'E': case 'e':
                   state = EXPONENT;
                   break;
                default:
                   return NOTFLOATING;
             }
             break;
+         //Special case where an optional + or - follows E or e
          case EXPONENTSIGN:
-            switch(inChar){
+            switch (*chPtr) {
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
                case '9':
                   state = POSTEXPONENT;
@@ -117,16 +122,17 @@ StatusCode DetectFloats(const char *chPtr)
                   return NOTFLOATING;
             }
             break;
+         //Can't feed back into normal loop, or could get e6e6 or something similiar
          case POSTEXPONENT:
-            switch(inChar){
+            switch (*chPtr) {
                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
                case '9':
                   state = POSTEXPONENT;
                   break;
-               case 'F':
+               case 'F': case 'f':
                   state = FLOATSTEP;
                   break;
-               case 'L':
+               case 'L': case 'l':
                   state = LONGSTEP;
                   break;
                case '\0':
@@ -135,30 +141,22 @@ StatusCode DetectFloats(const char *chPtr)
                   return NOTFLOATING;
             }
             break;
+         //If F or f present, has to be last character or fail
          case FLOATSTEP:
-            switch(inChar){
-               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-               case '9':
-                  state = FLOATSTEP;
-                  break;
+            switch (*chPtr) {
                case '\0':
                   return TYPE_FLOAT;
                default:
                   return NOTFLOATING;
             }
-            break;
+         //If l present, has to be end, or fail
          case LONGSTEP:
-            switch(inChar){
-               case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8':
-               case '9':
-                  state = LONGSTEP;
-                  break;
+            switch (*chPtr) {
                case '\0':
                   return TYPE_LDOUBLE;
                default:
                   return NOTFLOATING;
             }
-            break;
       }
    }
 }
