@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include "C2A5E2_Type-Driver.h"
 
-void *SafeMalloc(size_t inputSize);
+static void *SafeMalloc(size_t inputSize);
 
 Type **Create2D(size_t rows, size_t cols)
 {
@@ -31,7 +31,7 @@ Type **Create2D(size_t rows, size_t cols)
    return(start);
 }
 
-void *SafeMalloc(size_t inputSize)
+static void *SafeMalloc(size_t inputSize)
 {
    //Safe function to allocate memory
    void *voidPoint;
