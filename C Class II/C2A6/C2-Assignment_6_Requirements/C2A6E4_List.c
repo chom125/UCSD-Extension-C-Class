@@ -13,12 +13,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "C2A6E4_List-Driver.h"
-#define MAX_STRING_SIZE 256;
+#define MAX_STRING_SIZE 256
+List *NewList()
+{
+   List *toReturn;
+   if ((toReturn = (List *)malloc(sizeof(List))) == NULL)
+   {
+      fputs("Out of memory, exit\n", stderr);
+      exit(EXIT_FAILURE);
+   }
+   return(toReturn);
+}
+
 
 List *CreateList(FILE *fp)
 {
-   List *next;
+   List *head, *ptr, *scanner;
    char rString[MAX_STRING_SIZE];
-   
-   for(;)
+   for (scanner = head; scanner != NULL && scanner->next != rString; scanner = scanner->count)
+      ;
+   if (scanner != NULL)
+      scanner->count++;
+   else
+   {
+
+   }
+   return head;
 }
+
+List *PrintList(const List *head)
+{
+
+}
+
+void FreeList(List *head)
+{
+
+}
+
+
+/*
+Pseudocode for list function
+
+*/
