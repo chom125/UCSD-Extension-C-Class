@@ -31,40 +31,52 @@ List *CreateList(FILE *fp)
    List *head, *ptr, *scanner;
    char rString[MAX_STRING_SIZE];
 
-   //Loop through current list looking if rString already present
-   for (scanner = head; scanner != NULL && scanner->next != rString; scanner = scanner->count)
-      ;
-   //If item found, add one to the count of that item
-   if (scanner != NULL)
-      scanner->count++;
-   else
-   {
-      //If no instance of string, will create a new list element
-      ptr = NewList();
-      //Sets the "next" value to the head of list (next element)
-      ptr->next = head;
-      //Saves ptr into head, so can reference next time around
-      head = ptr;
-      //Set count to zero
-      ptr->count = 0;
-      //Point str to the active string, rString...think this may need to be different
-      ptr->*str = rString;
-   }
+   //Need to loop through entire text document, looking for strings, ignore puncuation and spaces
+   for (head = NULL, rString = fscanf(fp, "%s", rString); 
+      rString != EOF; rString = fscanf(fp, "%s", rString))
+      //Loop through current list looking if rString already present
+      for (scanner = head; scanner != NULL && scanner->str != rString; scanner = scanner->count)
+         ;
+      //If item found, add one to the count of that item
+      if (scanner != NULL)
+         scanner->count++;
+      else
+      {
+         //If no instance of string, will create a new list element
+         ptr = NewList();
+         //Sets the "next" value to the head of list (next element)
+         ptr->next = head;
+         //Saves ptr into head, so can reference next time around
+         head = ptr;
+         //Set count to zero
+         ptr->count = 0;
+         //Point str to the active string, rString...think this may need to be different
+         ptr->str = rString;
+      }
    return head;
 }
 
 List *PrintList(const List *head)
 {
-
+   //Iterate through the list, the next element is pointed to by head->next
+   for (; head != NULL; head = head->next)
+   {
+      //Print the values...need to allign this properly
+      printf("%s%d ea\n", head->str, head->count);
+   }
 }
 
 void FreeList(List *head)
 {
-
+   //Need to free up all memory allocated in the list
+   while (head != NULL)
+   {
+      //Saves the current pointer
+      List *current = head;
+      //Sets the pointer for the next time through
+      head = current->next;
+      //Frees both the current pointer, and space allocated for str
+      free(current->str);
+      free(current);
+   }
 }
-
-
-/*
-Pseudocode for list function
-
-*/
