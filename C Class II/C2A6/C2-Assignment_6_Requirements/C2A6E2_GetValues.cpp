@@ -1,88 +1,26 @@
-#define INSTRUCTOR_FILE /* DO NOT DEFINE THIS MACRO IN ANY FILES YOU CREATE */
-
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-/******************** DO NOT MODIFY THIS FILE IN ANY WAY ********************/
-
-/****************************************************************************
- * Everything in this file was written to help test/verify your code and must
- * not be altered in any way.  Do not rename this file or copy anything from
- * it into your file(s).  This file does not necessarily represent good coding
- * technique, proper formatting/style, or meet the requirements your code must
- * meet.  You do not need to understand the code in this file to write yours.
- ***************************************************************************/
-#ifdef INSTRUCTOR_FILE
-
-#include <cstdlib>
-#include <iomanip>
+/*
+ *Craig Ricker, U06369876
+ *lucke.pirate@gmail.com
+ *_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
+ *8/8/15
+ *C2A6E2_GetValues.cpp
+ *Win7
+ *Visual C++ 11.0
+ *
+ *User prompted for array elements
+ *Email title: C2A6E2_U06369876
+ */
 #include <iostream>
-#include <cfloat>
-using namespace std;
 
-const float MIN_SET = -1e-30F;
-const float MIN_TEST = MIN_SET + 0.1e-30F;
-const float MAX_SET = +1e+30F;
-const float MAX_TEST = MAX_SET - 0.1e+30F;
-
-float *SortValues(float *first, size_t elements);
-float *GetValues(float *first, size_t elements);
-
-static float *DisplayValues(float *first, size_t elements);
-
-int main()
+float *GetValues(float *first, size_t elements)
 {
-   const int SZ1 = 10;
-   const int SZ2 = 7;
-   const int SZ3 = 5;
-   float array1[SZ1 + 2];
-   float array2[SZ2 + 2];
-   float array3[SZ3 + 2];
-   bool gotError = false;
-
-   array1[0] = MIN_SET;
-   array2[0] = MIN_SET;
-   array3[0] = MIN_SET;
-   array1[SZ1 + 1] = MAX_SET;
-   array2[SZ2 + 1] = MAX_SET;
-   array3[SZ3 + 1] = MAX_SET;
-
-   if (!DisplayValues(SortValues(GetValues(array1 + 1, SZ1), SZ1), SZ1))
-      gotError = true;
-   if (!DisplayValues(SortValues(GetValues(array2 + 1, SZ2), SZ2), SZ2))
-      gotError = true;
-   if (!DisplayValues(SortValues(GetValues(array3 + 1, SZ3), SZ3), SZ3))
-      gotError = true;
-
-   if (gotError)
-      return EXIT_FAILURE;
-   return EXIT_SUCCESS;
-}
-
-float *DisplayValues(float *first, size_t elements)
-{
-   bool gotError = false;
-   float previous = *first, *ptr, *end = first + elements;
-
-   if (first[-1] > MIN_TEST || first[elements] < MAX_TEST)
+   //Inputs values into an array of size elements
+   float *workingArray = first;
+   for (int count = 0; count < (int)elements; count++, workingArray++)
    {
-      cerr << "Error - Out-of-bounds array access\n\n";
-      return NULL;
+      std::cout << "Enter item for array item " << count + 1 << " out of " << elements + 1;
+      std::cout << " items\n";
+      std::cin >> *workingArray;
    }
-
-   for (ptr = first; ptr < end; ++ptr) // get each element
-   {
-      cout << *ptr << '\n';
-      if (ptr != first)                // if not first element...
-         if (previous < *ptr)          // ...check sort order
-            gotError = true;
-      previous = *ptr;                 // save this element
-   }
-   if (gotError)
-   {
-      cerr << "Error - Array sorted incorrectly\n\n";
-      return NULL;
-   }
-   cout << "Array sorted correctly!\n\n";
    return first;
 }
-#endif
