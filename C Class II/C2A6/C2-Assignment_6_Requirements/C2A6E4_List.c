@@ -10,9 +10,15 @@
  *Will create list, print, and then free it
  *Email title: C2A6E4_U06369876
  */
+#include <stdio.h>
+#include <stdlib.h>
 #include "C2A6E4_List-Driver.h"
+#define MAX_STRING_SIZE 256;
 
 List *CreateList(FILE *fp)
 {
-   list *next;
+   List *next;
+   char rString[MAX_STRING_SIZE];
+   
+   for(;)
 }
