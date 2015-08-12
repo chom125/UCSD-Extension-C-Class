@@ -17,10 +17,10 @@ FILE *OpenFile(const char *fileName)
    //Safely open a file and return a pointer to it
    FILE *outFile;
    if ((outFile = fopen(fileName, "r")) == NULL)
-       {
-          //If file cannot be opened, terminate program
-          fprintf(stderr, "File open failure\n");
-          exit(EXIT_FAILURE);
-       }
+   {
+      //If file cannot be opened, terminate program
+      fprintf(stderr, "File open failure\n");
+      exit(EXIT_FAILURE);
+   }
    return outFile;
 }
