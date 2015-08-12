@@ -30,13 +30,25 @@ List *CreateList(FILE *fp)
 {
    List *head, *ptr, *scanner;
    char rString[MAX_STRING_SIZE];
+
+   //Loop through current list looking if rString already present
    for (scanner = head; scanner != NULL && scanner->next != rString; scanner = scanner->count)
       ;
+   //If item found, add one to the count of that item
    if (scanner != NULL)
       scanner->count++;
    else
    {
-
+      //If no instance of string, will create a new list element
+      ptr = NewList();
+      //Sets the "next" value to the head of list (next element)
+      ptr->next = head;
+      //Saves ptr into head, so can reference next time around
+      head = ptr;
+      //Set count to zero
+      ptr->count = 0;
+      //Point str to the active string, rString...think this may need to be different
+      ptr->*str = rString;
    }
    return head;
 }
