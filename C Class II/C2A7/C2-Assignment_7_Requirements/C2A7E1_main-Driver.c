@@ -106,7 +106,7 @@ NODE *BuildTree(NODE *pNode, char *str)
    }
    return(pNode);
 }
-
+ 
 /*  PrintTree recursively prints the binary tree in pNode alphabetically */
 void PrintTree(const NODE *pNode)
 {
