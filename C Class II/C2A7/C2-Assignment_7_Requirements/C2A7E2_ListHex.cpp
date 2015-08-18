@@ -15,21 +15,32 @@
 #include <iomanip>
 using namespace std;
 
+void *SafeMalloc(size_t size)
+{
+   void *vp;
+
+   if ((vp = malloc(size)) == NULL)
+   {
+      fputs("Out of memory\n", stderr);
+      exit(EXIT_FAILURE);
+   }
+   return(vp);
+}
+
 void ListHex(ifstream &inFile, int bytesPerLine)
 {
    //Set fill to 0
-   char *readLine;
+   char *buffer = (char*)SafeMalloc((size_t)bytesPerLine);
    cout << setfill('0') << hex;
-   unsigned char curChar = (unsigned char)inFile.read(<#char_type *__s#>, <#streamsize __n#>);
-   for (int byteCount = 1; inFile.good(); byteCount++, curChar = (unsigned char)inFile.get())
+   inFile.read(buffer, bytesPerLine);
+   for (; *buffer != ; inFile.read(buffer, bytesPerLine))
    {
-      //Outputs the text to the terminal
-      cout << setw(2) << (int)curChar << ' ';
-      if (byteCount == bytesPerLine)
+      char *end = buffer + (size_t)inFile.gcount();
+      for (int byteCount = 0; buffer < end; ++buffer, byteCount++)
       {
-         //When bytesPerLine is reached, print new line, set to 0
-         cout << '\n';
-         byteCount = 0;
+         cout << setw(2) << (int)(unsigned char)*buffer << ' ';
       }
+      cout << '\n';
    }
+   free(buffer);
 }
