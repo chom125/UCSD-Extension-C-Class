@@ -6,7 +6,11 @@
  *C2A7E4_ProcessStructures.c
  *Win7
  *Visual C++ 11.0
- *
+ *This will write data of struc Test to a file, read it, and 
+ *perform an Endian reversal for all items in the structure
+ *The result was correct based on my implmentation, there were four padding bytes
+ *between the float and double, non between double and void
+ *There were also four trailing bytes of padding.  This is a total of eight
  *Email title: C2A7E4_U06369876
  */
 #include <stdio.h>
