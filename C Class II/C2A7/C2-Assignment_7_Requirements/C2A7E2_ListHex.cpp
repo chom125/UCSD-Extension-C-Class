@@ -18,8 +18,9 @@ using namespace std;
 void ListHex(ifstream &inFile, int bytesPerLine)
 {
    //Set fill to 0
+   char *readLine;
    cout << setfill('0') << hex;
-   unsigned char curChar = (unsigned char)inFile.get();
+   unsigned char curChar = (unsigned char)inFile.read(<#char_type *__s#>, <#streamsize __n#>);
    for (int byteCount = 1; inFile.good(); byteCount++, curChar = (unsigned char)inFile.get())
    {
       //Outputs the text to the terminal
