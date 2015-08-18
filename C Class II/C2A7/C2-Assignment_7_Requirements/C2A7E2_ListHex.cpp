@@ -12,36 +12,23 @@
  */
 #include <fstream>
 #include <iostream>
-#include <cstdlib>
 #include <iomanip>
 using namespace std;
-
-
-
-void *SafeMalloc(size_t size)
-{
-   //Safetly allocates memory
-   void *vp;
-   if ((vp = malloc(size)) == NULL)
-   {
-      //If not enough memory, exits
-      fputs("Out of memory\n", stderr);
-      exit(EXIT_FAILURE);
-   }
-   return(vp);
-}
 
 void ListHex(ifstream &inFile, int bytesPerLine)
 {
    //Set fill to 0
-   cout << setfill('0');
-   unsigned char curChar = inFile.get();
-   for (int byteCount = 1; inFile.good(); byteCount++) {
-      cout << hex << setw(2) << (int)curChar << ' ';
-      if (byteCount == bytesPerLine) {
+   cout << setfill('0') << hex;
+   unsigned char curChar = (unsigned char)inFile.get();
+   for (int byteCount = 1; inFile.good(); byteCount++, curChar = (unsigned char)inFile.get())
+   {
+      //Outputs the text to the terminal
+      cout << setw(2) << (int)curChar << ' ';
+      if (byteCount == bytesPerLine)
+      {
+         //When bytesPerLine is reached, print new line, set to 0
          cout << '\n';
          byteCount = 0;
       }
-      curChar = inFile.get();
    }
 }

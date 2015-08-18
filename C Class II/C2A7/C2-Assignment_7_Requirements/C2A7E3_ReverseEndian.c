@@ -14,12 +14,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-void *ReverseEndian(void *ptr, size_t size){ 
-   size_t count;
-   char temp;
-   for (count = 0; count < size; count++){
-      temp = ptr[count];
-      ptr[count] = ptr[count + size];
-      ptr[count + size] = temp;
+//void *ReverseEndian(void *ptr, size_t size){ 
+//   size_t count;
+//   void* temp;
+//   for (count = 0; count < size; count++){
+//      temp = ptr[count];
+//      ptr[count] = ptr[size - count];
+//      ptr[count + size] = temp;
+//   }
+//}
+
+void *ReverseEndian(void *ptr, size_t size) {
+   short *tail = ptr + size;
+   for(; (short*)ptr > tail; --tail, ++ptr)
+   {
+      short *temp = ptr;
+      *temp = *(short*)tail;
+      *tail = *temp;
    }
+   return ptr;
 }
