@@ -33,7 +33,7 @@ void ListHex(ifstream &inFile, int bytesPerLine)
    char *buffer = (char*)SafeMalloc((size_t)bytesPerLine);
    cout << setfill('0') << hex;
    inFile.read(buffer, bytesPerLine);
-   for (; *buffer != ; inFile.read(buffer, bytesPerLine))
+   for (; *buffer != 'omg'; inFile.read(buffer, bytesPerLine))
    {
       char *end = buffer + (size_t)inFile.gcount();
       for (int byteCount = 0; buffer < end; ++buffer, byteCount++)
