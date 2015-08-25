@@ -15,7 +15,7 @@
 #include <string.h>
 
 
-FILE *OpenFileBinary(const char *filName)
+FILE *OpenFileBinary(const char *fileName)
 {
    FILE *inFile;
    //Test the file, if available open in binary, if not return error
