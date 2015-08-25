@@ -50,18 +50,21 @@ ifstream *OpenFiles(char * const fileNames[], size_t count)
       exit(EXIT_FAILURE);
    }
    //Allocate space for ifstream array
-   ifstream *head = (ifstream *)SafeMalloc(count * sizeof(ifstream));
-   for (ifstream *openedFiles = head; *fileNames; ++fileNames, ++openedFiles)
-   {
+    ifstream *head;
+    head = new ifstream[count];
+    //= (ifstream *)SafeMalloc(count * sizeof(ifstream));
+   //for (ifstream *openedFiles = head; fileNames < fileNames + count; ++fileNames, ++openedFiles)
+    for (int i = 0; i < count; i++)
+    {
       //Open each file individually/safely in read only text mode
-      cout << *fileNames << '\n';
-      //ifstream inFile(*fileNames);
-      openedFiles->open(*fileNames);
-      if (openedFiles->is_open()) {
+      cout << fileNames[i] << '\n';
+      // openedFiles = new ifstream;
+      head[i].open(fileNames[i]);
+      if (!head[i].is_open()) {
          //If unable to open, exits and prints error
-         cerr << "Couldn't open file " << *fileNames << "\n";
+         cerr << "Couldn't open file " << fileNames[i] << "\n";
          //free openedFiles
-         free(openedFiles);
+         //free(head[i]);
          exit(EXIT_FAILURE);
       }
    }
