@@ -30,53 +30,82 @@
 #define EXP_NBIAS 127
 #define EXP_DBIAS 127
 #define EXP_MAX 255
+
 #define ARRAY_SIZE 4
 
+void *SafeMalloc(size_t size)
+{
+   void *vp;
+
+   if ((vp = malloc(size)) == NULL)
+   {
+      fputs("Out of memory\n", stderr);
+      exit(EXIT_FAILURE);
+   }
+   return(vp);
+}
 
 void DisplayModifiedSingleReals(FILE *inFile)
 {
+   unsigned long pattern;
+   int arrayLoop;
    size_t readCount;
-   for (;;readCount = fread(
+   unsigned char * buffer = SafeMalloc(CHAR_BIT* ARRAY_SIZE);
+   readCount = fread(buffer, CHAR_BIT, ARRAY_SIZE, inFile);
+   if (readCount != ARRAY_SIZE)
+   {
+      printf("Unexpected EOF\n");
+   }
+   for (pattern = (unsigned long) buffer[0], arrayLoop = 1; arrayLoop < ARRAY_SIZE; arrayLoop++)
+   {
+      printf("Buffer is: %08x\n", buffer[arrayLoop]);
+      printf("pattern is: %08x\n", pattern);
+      pattern << ARRAY_SIZE;
+      printf("pattern is: %08x\n", pattern);
+      pattern &= buffer[arrayLoop];
+      printf("pattern is: %08x\n", pattern);
+   }
+   printf("ThIS is a test\n");
+   //for (;;readCount = fread(
 
 }
-
-void HelpDisplay(unsigned long pattern)
-{
-   //Print out the pattern
-   int signIsnegative = !!(SIGN_MASK & pattern);
-   int exponent = (EXP_MASK & pattern) >> FRAC_BITS;
-   long fraction = FRAC_MASK & pattern;
-   int bias, status;
-   double result;
-   
-   if (exponent == 0 && fraction == 0)
-   {
-      status = signIsnegative ? F_NZERO : F_PZERO;
-      result = 0;
-   }
-   else if (exponent == EXP_MAX && fraction == 0)
-   {
-      status = signIsnegative ? F_NINF :F_PINF;
-   }
-   else if (exponent == EXP_MAX && fraction != 0)
-      status = signIsnegative ? F_NNAN : F_PNAN;
-   else
-      result = fraction * pow(2.0, -FRAC_BITS);
-      
-      if (exponent != 0)
-      {
-         bias = EXP_NBIAS;
-         status = F_NORM;
-         ++result;
-      }
-      else
-      {
-         bias = EXP_DBIAS;
-         status = F_DENORM;
-      }
-      result *= pow(2.0, exponent - bias);
-      
-      if (signIsnegative)
-         result = -result;
-}
-}
+//
+//void HelpDisplay(unsigned long pattern)
+//{
+//   //Print out the pattern
+//   int signIsnegative = !!(SIGN_MASK & pattern);
+//   int exponent = (EXP_MASK & pattern) >> FRAC_BITS;
+//   long fraction = FRAC_MASK & pattern;
+//   int bias, status;
+//   double result;
+//   
+//   if (exponent == 0 && fraction == 0)
+//   {
+//      status = signIsnegative ? F_NZERO : F_PZERO;
+//      result = 0;
+//   }
+//   else if (exponent == EXP_MAX && fraction == 0)
+//   {
+//      status = signIsnegative ? F_NINF :F_PINF;
+//   }
+//   else if (exponent == EXP_MAX && fraction != 0)
+//      status = signIsnegative ? F_NNAN : F_PNAN;
+//   else
+//      result = fraction * pow(2.0, -FRAC_BITS);
+//      
+//      if (exponent != 0)
+//      {
+//         bias = EXP_NBIAS;
+//         status = F_NORM;
+//         ++result;
+//      }
+//      else
+//      {
+//         bias = EXP_DBIAS;
+//         status = F_DENORM;
+//      }
+//      result *= pow(2.0, exponent - bias);
+//      
+//      if (signIsnegative)
+//         result = -result;
+//}

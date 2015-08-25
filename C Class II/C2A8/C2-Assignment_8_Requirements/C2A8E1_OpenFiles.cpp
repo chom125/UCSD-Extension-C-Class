@@ -7,21 +7,16 @@
  *Win7
  *Visual C++ 11.0
  *
- *This will read a file in binary mode, and print out hex representations of the data
+ *Will create an array of open ifstream objects
  *Email title: C2A8E1_U06369876
  */
 #include <fstream>
 #include <iostream>
-#include <iomanip>
+#include <cstdlib>
 using namespace std;
-
-
-
-
 
 ifstream *OpenFiles(char * const fileNames[], size_t count)
 {
-   string buffer;
    //Check if an empty array was sent
    if (count == 0)
    {
@@ -29,16 +24,22 @@ ifstream *OpenFiles(char * const fileNames[], size_t count)
       exit(EXIT_FAILURE);
    }
    //Allocate space for ifstream array
-    ifstream *head;
-    head = new ifstream[count];
-    for (int i = 0; i < count; i++)
-    {
+   ifstream *head;
+   if ((head = new (nothrow) ifstream[count]) == NULL)
+   {
+      //Check if allocation successful
+      cerr << "Couldn't allocate memory, closing\n";
+      exit(EXIT_FAILURE);
+   }
+   for (size_t actFile = 0; actFile < count; actFile++)
+   {
       //Open each file individually/safely in read only text mode
-      // openedFiles = new ifstream;
-      head[i].open(fileNames[i]);
-      if (!head[i].is_open()) {
+      head[actFile].open(fileNames[actFile]);
+      if (!head[actFile].is_open())
+      {
          //If unable to open, exits and prints error
-         cerr << "Couldn't open file " << fileNames[i] << "\n";
+         cerr << "Couldn't open file " << fileNames[actFile] << "\n";
+         delete[] head;
          exit(EXIT_FAILURE);
       }
    }

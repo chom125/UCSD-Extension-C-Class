@@ -7,12 +7,12 @@
  *Win7
  *Visual C++ 11.0
  *
- *This will read a file in binary mode, and print out hex representations of the data
+ *Takes an array of open ifstream objects, and alternates files to output text from
  *Email title: C2A8E1_U06369876
  */
 #include <fstream>
 #include <iostream>
-#include <iomanip>
+#include <cstdlib>
 #include <string>
 using namespace std;
 
@@ -24,15 +24,17 @@ void MergeAndDisplay(ifstream files[], size_t count)
    ifstream *startSave = files, *end = files + count;
    while (count != 0)
    {
-      for (files = startSave; files < end; ++files) {
-         if (!(*files).is_open())
+      for (files = startSave; files < end; ++files) 
+      {
+         if (!files->is_open())
             continue;
-         //Read text how??
-         getline((*files), buffer);
-         if ((*files).eof())
+         //reads the next
+         getline(*files, buffer);
+         //Need to check if data is actually present...may not be the best way
+         if (files->eof())
          {
             //File has reached the end, close and subtract one from count
-            (*files).close();
+            files->close();
             --count;
          }
          else
