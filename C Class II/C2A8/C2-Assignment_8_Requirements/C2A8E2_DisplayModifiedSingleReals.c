@@ -50,20 +50,21 @@ void DisplayModifiedSingleReals(FILE *inFile)
    unsigned long pattern;
    int arrayLoop;
    size_t readCount;
-   unsigned char * buffer = SafeMalloc(CHAR_BIT* ARRAY_SIZE);
-   readCount = fread(buffer, CHAR_BIT, ARRAY_SIZE, inFile);
+
+    unsigned char buffer[ARRAY_SIZE]; // = SafeMalloc(CHAR_BIT* ARRAY_SIZE);
+   readCount = fread(buffer, sizeof(unsigned char), ARRAY_SIZE, inFile);
    if (readCount != ARRAY_SIZE)
    {
       printf("Unexpected EOF\n");
    }
-   for (pattern = (unsigned long) buffer[0], arrayLoop = 1; arrayLoop < ARRAY_SIZE; arrayLoop++)
+    
+   // unsigned long val = (unsigned long) buffer[0] << 24;
+   for (pattern = (unsigned long) buffer[ARRAY_SIZE - 1], arrayLoop = ARRAY_SIZE - 2; arrayLoop >= 0; arrayLoop--)
    {
-      printf("Buffer is: %08x\n", buffer[arrayLoop]);
-      printf("pattern is: %08x\n", pattern);
-      pattern << ARRAY_SIZE;
-      printf("pattern is: %08x\n", pattern);
-      pattern &= buffer[arrayLoop];
-      printf("pattern is: %08x\n", pattern);
+      printf("Buffer[%d] is: %08x\n", arrayLoop, buffer[arrayLoop]);
+      printf("pattern is: %08lx\n", pattern);
+       pattern |= (unsigned long) buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * 8;
+      printf("pattern is: %08lx\n", pattern);
    }
    printf("ThIS is a test\n");
    //for (;;readCount = fread(
