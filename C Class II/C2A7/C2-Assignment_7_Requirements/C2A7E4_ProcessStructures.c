@@ -19,7 +19,8 @@
 
 void *ReverseEndian(void *ptr, size_t size);
 
-struct Test *ReadStructures(struct Test *ptr, size_t count, FILE *fp){
+struct Test *ReadStructures(struct Test *ptr, size_t count, FILE *fp)
+{
    //This will read count number of Test objects and check it read the correct number
    size_t readCount = fread(ptr, sizeof(struct Test), count, fp);
    if (readCount != count)
@@ -35,11 +36,11 @@ struct Test *ReverseMembersEndian(struct Test *ptr)
 {
    //Call reverseEndian for each member in Test pointed to by ptr
    //Float first
-   ReverseEndian((void *) ptr, sizeof(float));
+   ReverseEndian((void *)&ptr->flt, sizeof(ptr->flt));
    //Double next, get address from the item itself
-   ReverseEndian((void *)&(ptr->dbl), sizeof(double));
+   ReverseEndian((void *)&ptr->dbl, sizeof(ptr->dbl));
    //void float last
-   ReverseEndian((void *)&(ptr->vp), sizeof(void *));
+   ReverseEndian((void *)&ptr->vp, sizeof(ptr->vp));
    return ptr;
 }
 
@@ -52,5 +53,5 @@ struct Test *WriteStructures(const struct Test *ptr, size_t count, FILE *fp)
       fprintf(stderr, "Improper number of Tests written\n");
       exit(EXIT_FAILURE);
    }
-   return ptr;
+   return (struct Test *)ptr;
 }

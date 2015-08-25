@@ -20,26 +20,45 @@ const int BUFFERSIZE = 511;
 void MergeAndDisplay(ifstream files[], size_t count)
 {
    string buffer;
-   ifstream *startSave = files;
-   //This will run until all files are closed
+   cout << "This is in function\n";
+   cout << "it didn't crash\n";
    while (count != 0)
    {
-      for (; *files; ++files)
-      {
-         //Do an initial check if the file is open, if so, skip it
-         if ((*files).is_open())
+      ifstream *startSave = files;
+      for (files = startSave; *files; ++startSave) {
+         if (!(*files).is_open())
             continue;
-         //Read the line, write data
-         //May need to change this line 1 page 2 of assignment
-         getline(*files, buffer);
+         //Read text how??
+         getline((*files), buffer);
          cout << buffer;
-         //Checks if current file has reached EOF
          if ((*files).eof())
          {
-            //If file has reached EOF, close it, subtract one from count
+            //File has reached the end, close and subtract one from count
             (*files).close();
             --count;
          }
       }
    }
+  
+   //This will run until all files are closed
+//   while (count != 0)
+//   {
+//      for (; *files; ++files)
+//      {
+//         //Do an initial check if the file is open, if so, skip it
+//         if ((*files).is_open())
+//            continue;
+//         //Read the line, write data
+//         //May need to change this line 1 page 2 of assignment
+//         //getline(*files, buffer);
+//         cout << buffer;
+//         //Checks if current file has reached EOF
+//         if ((*files).eof())
+//         {
+//            //If file has reached EOF, close it, subtract one from count
+//            (*files).close();
+//            --count;
+//         }
+//      }
+//   }
 }

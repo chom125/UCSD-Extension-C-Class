@@ -27,27 +27,42 @@ void *SafeMalloc(size_t size)
    return(vp);
 }
 
+//ifstream *OpenFiles(char * const fileNames[], size_t count)
+//{
+//   string buffer;
+//   ifstream *returnPoint = (ifstream *) SafeMalloc(sizeof(ifstream *) * count);
+////   for (; *fileNames; ++fileNames) {
+////      ifstream fIn(*fileNames);
+////   }
+//   ifstream fIn(*fileNames);
+//   getline(fIn, buffer);
+//   return returnPoint;
+//}
+
 ifstream *OpenFiles(char * const fileNames[], size_t count)
 {
+   string buffer;
    //Check if an empty array was sent
-   if (count < 0)
+   if (count == 0)
    {
       cerr << "No files input\n";
       exit(EXIT_FAILURE);
    }
-   ifstream *openedFiles = (ifstream *)SafeMalloc(count * sizeof(ifstream *));
-   for (; *fileNames; ++fileNames, ++openedFiles)
+   //Allocate space for ifstream array
+   ifstream *head = (ifstream *)SafeMalloc(count * sizeof(ifstream));
+   for (ifstream *openedFiles = head; *fileNames; ++fileNames, ++openedFiles)
    {
       //Open each file individually/safely in read only text mode
       cout << *fileNames << '\n';
-      ifstream inFile(*fileNames,);
-      if (!inFile.is_open()) {
+      //ifstream inFile(*fileNames);
+      openedFiles->open(*fileNames);
+      if (openedFiles->is_open()) {
          //If unable to open, exits and prints error
          cerr << "Couldn't open file " << *fileNames << "\n";
-         //free openedFiles 
+         //free openedFiles
          free(openedFiles);
          exit(EXIT_FAILURE);
       }
-      cout << inFile.gcount();
    }
+   return head;
 }
