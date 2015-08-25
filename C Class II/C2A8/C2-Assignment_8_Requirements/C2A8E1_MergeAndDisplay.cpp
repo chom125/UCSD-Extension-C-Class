@@ -3,62 +3,40 @@
  *lucke.pirate@gmail.com
  *_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
  *8/8/15
- *C2A7E2_ListHex.cpp
+ *C2A8E1_MergeAndDisplay.cpp
  *Win7
  *Visual C++ 11.0
  *
  *This will read a file in binary mode, and print out hex representations of the data
- *Email title: C2A7E2_U06369876
+ *Email title: C2A8E1_U06369876
  */
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <string>
 using namespace std;
-const int BUFFERSIZE = 511;
 
 void MergeAndDisplay(ifstream files[], size_t count)
 {
+   //Creates a buffer to readlines into
    string buffer;
-   cout << "This is in function\n";
-   cout << "it didn't crash\n";
+   //Save the start of input array, and set end of loop
+   ifstream *startSave = files, *end = files + count;
    while (count != 0)
    {
-      ifstream *startSave = files;
-      for (files = startSave; *files; ++startSave) {
+      for (files = startSave; files < end; ++files) {
          if (!(*files).is_open())
             continue;
          //Read text how??
          getline((*files), buffer);
-         cout << buffer;
          if ((*files).eof())
          {
             //File has reached the end, close and subtract one from count
             (*files).close();
             --count;
          }
+         else
+            cout << buffer << "\n";
       }
    }
-  
-   //This will run until all files are closed
-//   while (count != 0)
-//   {
-//      for (; *files; ++files)
-//      {
-//         //Do an initial check if the file is open, if so, skip it
-//         if ((*files).is_open())
-//            continue;
-//         //Read the line, write data
-//         //May need to change this line 1 page 2 of assignment
-//         //getline(*files, buffer);
-//         cout << buffer;
-//         //Checks if current file has reached EOF
-//         if ((*files).eof())
-//         {
-//            //If file has reached EOF, close it, subtract one from count
-//            (*files).close();
-//            --count;
-//         }
-//      }
-//   }
 }
