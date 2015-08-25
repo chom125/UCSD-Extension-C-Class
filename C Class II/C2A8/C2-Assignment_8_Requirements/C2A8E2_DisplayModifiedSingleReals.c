@@ -23,13 +23,13 @@
 #define F_PNAN 5
 #define F_NNAN (-F_PNAN)
 
-#define SIGN_MASK 0X80000000uL
-#define EXP_MASK 0x7F800000uL
-#define FRAC_MASK 0x007FFFFFuL
-#define FRAC_BITS 23
-#define EXP_NBIAS 127
-#define EXP_DBIAS 127
-#define EXP_MAX 255
+#define SIGN_MASK 0X80000000uL   /* Exponent mask*/
+#define EXP_MASK 0x7FC00000uL
+#define FRAC_MASK 0x003FFFFFuL
+#define FRAC_BITS 22
+#define EXP_NBIAS 255
+#define EXP_DBIAS 254
+#define EXP_MAX 511
 
 #define ARRAY_SIZE 4
 
@@ -48,65 +48,76 @@ void *SafeMalloc(size_t size)
 void DisplayModifiedSingleReals(FILE *inFile)
 {
    unsigned long pattern;
-   int arrayLoop;
+   double result;
+   int arrayLoop, status;
    size_t readCount;
 
     unsigned char buffer[ARRAY_SIZE]; // = SafeMalloc(CHAR_BIT* ARRAY_SIZE);
-   readCount = fread(buffer, sizeof(unsigned char), ARRAY_SIZE, inFile);
-   if (readCount != ARRAY_SIZE)
-   {
-      printf("Unexpected EOF\n");
-   }
-    
-   // unsigned long val = (unsigned long) buffer[0] << 24;
-   for (pattern = (unsigned long) buffer[ARRAY_SIZE - 1], arrayLoop = ARRAY_SIZE - 2; arrayLoop >= 0; arrayLoop--)
-   {
-      printf("Buffer[%d] is: %08x\n", arrayLoop, buffer[arrayLoop]);
-      printf("pattern is: %08lx\n", pattern);
-       pattern |= (unsigned long) buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * 8;
-      printf("pattern is: %08lx\n", pattern);
-   }
-   printf("ThIS is a test\n");
-   //for (;;readCount = fread(
+   
 
+   for (;;)
+   {
+      readCount = fread(buffer, sizeof(unsigned char), ARRAY_SIZE, inFile);
+      if (readCount != ARRAY_SIZE)
+      {
+         printf("Unexpected EOF\n");
+         break;
+      }
+      for (pattern = (unsigned long)buffer[ARRAY_SIZE - 1], arrayLoop = ARRAY_SIZE - 2; arrayLoop >= 0; arrayLoop--)
+         //This will create the original pattern stored into an unsigned long
+         pattern |= (unsigned long)buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * 8;
+      printf("0x%08lx", pattern);
+      status = HelpDisplay(pattern, &result);
+      printf("%e\n", result);
+      if (feof(inFile))
+         break;
+   }
 }
-//
-//void HelpDisplay(unsigned long pattern)
-//{
-//   //Print out the pattern
-//   int signIsnegative = !!(SIGN_MASK & pattern);
-//   int exponent = (EXP_MASK & pattern) >> FRAC_BITS;
-//   long fraction = FRAC_MASK & pattern;
-//   int bias, status;
-//   double result;
-//   
-//   if (exponent == 0 && fraction == 0)
-//   {
-//      status = signIsnegative ? F_NZERO : F_PZERO;
-//      result = 0;
-//   }
-//   else if (exponent == EXP_MAX && fraction == 0)
-//   {
-//      status = signIsnegative ? F_NINF :F_PINF;
-//   }
-//   else if (exponent == EXP_MAX && fraction != 0)
-//      status = signIsnegative ? F_NNAN : F_PNAN;
-//   else
-//      result = fraction * pow(2.0, -FRAC_BITS);
-//      
-//      if (exponent != 0)
-//      {
-//         bias = EXP_NBIAS;
-//         status = F_NORM;
-//         ++result;
-//      }
-//      else
-//      {
-//         bias = EXP_DBIAS;
-//         status = F_DENORM;
-//      }
-//      result *= pow(2.0, exponent - bias);
-//      
-//      if (signIsnegative)
-//         result = -result;
-//}
+
+int HelpDisplay(unsigned long pattern, double *result)
+{
+   //Print out the pattern
+   int signIsnegative = !!(SIGN_MASK & pattern);
+   int exponent = (EXP_MASK & pattern) >> FRAC_BITS;
+   long fraction = FRAC_MASK & pattern;
+   int bias, status;
+   if (signIsnegative == 0)
+      printf("+");
+   else
+      printf("-");
+
+   
+   if (exponent == 0 && fraction == 0)
+   {
+      status = signIsnegative ? F_NZERO : F_PZERO;
+      *result = 0;
+   }
+   else if (exponent == EXP_MAX && fraction == 0)
+   {
+      status = signIsnegative ? F_NINF :F_PINF;
+      
+   }
+   else if (exponent == EXP_MAX && fraction != 0)
+      status = signIsnegative ? F_NNAN : F_PNAN;
+   else
+   {
+      *result = fraction * pow(2.0, -FRAC_BITS);
+
+      if (exponent != 0)
+      {
+         bias = EXP_NBIAS;
+         status = F_NORM;
+         ++*result;
+      }
+      else
+      {
+         bias = EXP_DBIAS;
+         status = F_DENORM;
+      }
+      *result *= pow(2.0, exponent - bias);
+
+      if (signIsnegative)
+         *result = -*result;
+   }
+   return(status);
+}
