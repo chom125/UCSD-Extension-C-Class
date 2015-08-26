@@ -101,8 +101,8 @@ void DisplayModifiedSingleReals(FILE *inFile)
             printf("Unexpected EOF\n");         
          break;
       }
-      for (pattern = (unsigned long)buffer[ARRAY_SIZE - 1], 
-         arrayLoop = ARRAY_SIZE - BASE_POWA; arrayLoop >= 0; arrayLoop--)
+      pattern = (unsigned long)buffer[ARRAY_SIZE - 1];
+      for (arrayLoop = ARRAY_SIZE - BASE_POWA; arrayLoop >= 0; arrayLoop--)
          //This will create the original pattern stored into an unsigned long
          pattern |= (unsigned long)buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * HEX_SIZE;
       //Prints out the pattern in hex format, and gives some trailing spaces/text for proper formatting
