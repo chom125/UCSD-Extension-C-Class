@@ -41,4 +41,5 @@ void MergeAndDisplay(ifstream files[], size_t count)
             cout << buffer << "\n";
       }
    }
+   delete[] files;
 }

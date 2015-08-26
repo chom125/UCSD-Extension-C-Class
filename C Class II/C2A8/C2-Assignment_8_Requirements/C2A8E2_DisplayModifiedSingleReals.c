@@ -1,21 +1,23 @@
 /*
-*Craig Ricker, U06369876
-*lucke.pirate@gmail.com
-*_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
-*8/8/15
-*C2A7E1_main.c
-*Win7
-*Visual C++ 11.0
-*
-*Using both a hashtable and binary list sort and store the number of repeats
-*Email title: C2A7E1_U06369876
-*/
+ *Craig Ricker, U06369876
+ *lucke.pirate@gmail.com
+ *_SP15_OL: C/C++ Programming II : Fundamental Programming Concepts, 109824, Ray Mitchell
+ *8/8/15
+ *C2A8E2_DisplayModifiedSingleReals.c
+ *Win7
+ *Visual C++ 11.0
+ *
+ *Reads through binary file, and converts different number form to standard
+ *Email title: C2A8E2_U06369876
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-#define F_NORM 1
-#define F_DENORM 2
+#define F_PNORM 1
+#define F_NNORM (-F_PNORM)
+#define F_PDENORM 2
+#define F_NDENORM (-F_PDENORM)
 #define F_PZERO 3
 #define F_NZERO (-F_PZERO)
 #define F_PINF 4
@@ -30,94 +32,121 @@
 #define EXP_NBIAS 255
 #define EXP_DBIAS 254
 #define EXP_MAX 511
-
+#define BASE_POWA 2
+#define HEX_SIZE 8
 #define ARRAY_SIZE 4
 
-void *SafeMalloc(size_t size)
+
+static int HelpDisplay(unsigned long pattern, double *result)
 {
-   void *vp;
-
-   if ((vp = malloc(size)) == NULL)
-   {
-      fputs("Out of memory\n", stderr);
-      exit(EXIT_FAILURE);
-   }
-   return(vp);
-}
-
-void DisplayModifiedSingleReals(FILE *inFile)
-{
-   unsigned long pattern;
-   double result;
-   int arrayLoop, status;
-   size_t readCount;
-
-    unsigned char buffer[ARRAY_SIZE]; // = SafeMalloc(CHAR_BIT* ARRAY_SIZE);
-   
-
-   for (;;)
-   {
-      readCount = fread(buffer, sizeof(unsigned char), ARRAY_SIZE, inFile);
-      if (readCount != ARRAY_SIZE)
-      {
-         printf("Unexpected EOF\n");
-         break;
-      }
-      for (pattern = (unsigned long)buffer[ARRAY_SIZE - 1], arrayLoop = ARRAY_SIZE - 2; arrayLoop >= 0; arrayLoop--)
-         //This will create the original pattern stored into an unsigned long
-         pattern |= (unsigned long)buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * 8;
-      printf("0x%08lx", pattern);
-      status = HelpDisplay(pattern, &result);
-      printf("%e\n", result);
-      if (feof(inFile))
-         break;
-   }
-}
-
-int HelpDisplay(unsigned long pattern, double *result)
-{
-   //Print out the pattern
+   //Function stolen from book which will binary data into useable number
    int signIsnegative = !!(SIGN_MASK & pattern);
    int exponent = (EXP_MASK & pattern) >> FRAC_BITS;
    long fraction = FRAC_MASK & pattern;
-   int bias, status;
-   if (signIsnegative == 0)
-      printf("+");
-   else
-      printf("-");
-
-   
+   int status;
+   //Tests if it is a zero
    if (exponent == 0 && fraction == 0)
    {
+      //logical test to decide if is negative or positive zero
       status = signIsnegative ? F_NZERO : F_PZERO;
       *result = 0;
    }
+   //Test for + or - INF
    else if (exponent == EXP_MAX && fraction == 0)
-   {
-      status = signIsnegative ? F_NINF :F_PINF;
-      
-   }
+      status = signIsnegative ? F_NINF : F_PINF;
+   //Test for + or 0 NAN
    else if (exponent == EXP_MAX && fraction != 0)
       status = signIsnegative ? F_NNAN : F_PNAN;
+   //Defaults to number
    else
    {
-      *result = fraction * pow(2.0, -FRAC_BITS);
-
+      int bias;
+      *result = fraction * pow(BASE_POWA, -FRAC_BITS);
+      //Then calculates if number is normalized or denormalized
       if (exponent != 0)
       {
          bias = EXP_NBIAS;
-         status = F_NORM;
+         status = signIsnegative ? F_NNORM : F_PNORM;
          ++*result;
       }
       else
       {
          bias = EXP_DBIAS;
-         status = F_DENORM;
+         status = signIsnegative ? F_NDENORM : F_PDENORM;
       }
-      *result *= pow(2.0, exponent - bias);
-
+      *result *= pow(BASE_POWA, exponent - bias);
+      //Negate number, if required
       if (signIsnegative)
          *result = -*result;
    }
    return(status);
+}
+
+void DisplayModifiedSingleReals(FILE *inFile)
+{
+   //Will read through a binary file, and deal with modified single real number format
+   double result;
+   unsigned char buffer[ARRAY_SIZE];
+   //Infinite loop, broken when EOF is reached during the loop
+   for (;;)
+   {
+      int arrayLoop, status;
+      unsigned long pattern;
+      size_t readCount = fread(buffer, 1, ARRAY_SIZE, inFile);
+      if (readCount != ARRAY_SIZE)
+      {
+         //If read count is zero, EOF reached normally
+         if (readCount != 0)
+            //If not, reached unexpected EOF
+            printf("Unexpected EOF\n");         
+         break;
+      }
+      for (pattern = (unsigned long)buffer[ARRAY_SIZE - 1], 
+         arrayLoop = ARRAY_SIZE - BASE_POWA; arrayLoop >= 0; arrayLoop--)
+         //This will create the original pattern stored into an unsigned long
+         pattern |= (unsigned long)buffer[arrayLoop] << (ARRAY_SIZE - 1 - arrayLoop) * HEX_SIZE;
+      //Prints out the pattern in hex format, and gives some trailing spaces/text for proper formatting
+      printf("0x%08lx     ", pattern);
+      //Uses help function to calculate the modified number, and number type
+      status = HelpDisplay(pattern, &result);
+      //Switch on status, which is a flag of number type
+      switch (status)
+      {
+      case F_PNORM:
+         printf("+%-18eNormal\n", result);
+         break;
+      case F_NNORM:
+         printf("%-19eNormal\n", result);
+         break;
+      case F_PDENORM:
+         printf("+%-18eDenormal\n", result);
+         break;
+      case F_NDENORM:
+         printf("%-19eDenormal\n", result);
+         break;
+      case F_PZERO:
+         printf("+%-18eZero\n", result);
+         break;
+      case F_NZERO:
+         printf("-%-18eZero\n", result);
+         break;
+      case F_PINF:
+         printf("+INF\n");
+         break;
+      case F_NINF:
+         printf("-INF\n");
+         break;
+      case F_PNAN:
+         printf("+NAN\n");
+         break;
+      case F_NNAN:
+         printf("-NAN\n");
+         break;
+      default:
+         printf("This is an error\n");
+      }
+      //Check if end of file has been reached by fread
+      if (feof(inFile))
+         break;
+   }
 }
